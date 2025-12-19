@@ -1,0 +1,13 @@
+---
+- name: Setup DevOps Infrastructure
+  hosts: local
+  become: yes
+  vars_files:
+    - group_vars/all.yml
+    # - group_vars/vault.yml # Encrypted vars would be here
+
+  roles:
+    - common
+    - docker
+    - jenkins
+    - k8s

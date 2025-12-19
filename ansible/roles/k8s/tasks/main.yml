@@ -1,0 +1,32 @@
+---
+- name: Install kubectl
+  shell: |
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  args:
+    creates: /usr/local/bin/kubectl
+
+- name: Install Kind
+  shell: |
+    curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+    chmod +x ./kind
+    mv ./kind /usr/local/bin/kind
+  args:
+    creates: /usr/local/bin/kind
+
+# NOTE: Actual cluster creation is usually manual or requires careful handling in Ansible
+# to avoid recreating it every time.
+
+- name: Ensure K8s directory exists
+  file:
+    path: /opt/devops-project/k8s
+    state: directory
+
+- name: Copy Manifests
+  copy:
+    src: "{{ playbook_dir }}/../k8s/"
+    dest: /opt/devops-project/k8s/
+
+- name: Apply Manifests (Deploy)
+  shell: kubectl apply -f /opt/devops-project/k8s/
+  when: deploy_k8s | default(false) | bool

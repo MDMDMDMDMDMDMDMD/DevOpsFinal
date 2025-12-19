@@ -1,0 +1,3 @@
+jenkins_port: 8080
+deploy_k8s: true
+db_password: "secretpassword" # In production, use ansible-vault encrypt_string

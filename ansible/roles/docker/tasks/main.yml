@@ -1,0 +1,29 @@
+---
+- name: Install Docker dependencies
+  apt:
+    name:
+      - ca-certificates
+      - gnupg
+    state: present
+
+- name: Remove old Docker versions
+  apt:
+    name: ["docker", "docker-engine", "docker.io", "containerd", "runc"]
+    state: absent
+
+- name: Install Docker.io
+  apt:
+    name: docker.io
+    state: present
+
+- name: Start Docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Add user to docker group
+  user:
+    name: "{{ ansible_user_id }}"
+    groups: docker
+    append: yes
